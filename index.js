@@ -29,21 +29,35 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-rl.question('Enter a song title: ', async function(songTitle) {
-    try {
-        // Search for track by title
+async function askForTitle() {
+    while (true) {
+        let songTitle = await new Promise(resolve => rl.question('Enter a song title: ', resolve));
+        try {
+        // search for track by title
         const tracks = await spotifyApi.searchTracks(songTitle);
         const track = tracks.body.tracks.items[0];
-        // Get track's title, artist and duration in ms
+        // get track's title, artist and duration
         const title = track.name;
         const artist = track.artists[0].name;
-        // From ms to sec.
         const duration = track.duration_ms / 1000;
         console.log(`Title: ${title}`);
         console.log(`Artist: ${artist}`);
+        // From ms to sec.
         console.log(`Duration (seconds): ${duration}`);
-        rl.close();
-    } catch (error) {
-        console.error(error);
+        } catch (error) {
+            console.error(error);
+        }
+        let answer = '';
+        while (answer !== 'y' && answer !== 'n') {
+            answer = await new Promise(resolve => rl.question('Do you want to search again? (y/n)', resolve));
+            if (answer !== 'y' && answer !== 'n') {
+                console.log("Invalid input. Please enter 'y' or 'n'.");
+            }
+        }
+        if (answer === 'n') {
+            rl.close();
+            break;
+        }
     }
-});
+}
+askForTitle();
