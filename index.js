@@ -1,5 +1,5 @@
 require('dotenv').config();
-const chalk = require('chalk');
+const color = require('colorette');
 const SpotifyWebApi = require('spotify-web-api-node');
 const readline = require('readline');
 
@@ -32,7 +32,8 @@ const rl = readline.createInterface({
 
 async function askForTitle() {
     while (true) {
-        let songTitle = await new Promise(resolve => rl.question(chalk.bgGreen('Enter a song title: '), resolve));        try {
+        let songTitle = await new Promise(resolve => rl.question(color.bgGreen('Enter a song title: '), resolve));
+        try {
         // search for track by title
         const tracks = await spotifyApi.searchTracks(songTitle);
         const track = tracks.body.tracks.items[0];
